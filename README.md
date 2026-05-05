@@ -1,0 +1,101 @@
+![marketing_assets_banner](https://github.com/user-attachments/assets/b8b4ae5c-06bb-46a7-8d94-903a04595036)
+[![GitHub License](https://img.shields.io/github/license/indifferentbroccoli/conan-exiles-enhanced-server-docker?style=for-the-badge&color=6aa84f)](https://github.com/indifferentbroccoli/conan-exiles-enhanced-server-docker/blob/main/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/indifferentbroccoli/conan-exiles-enhanced-server-docker?style=for-the-badge&color=6aa84f)](https://github.com/indifferentbroccoli/conan-exiles-enhanced-server-docker/releases)
+[![GitHub Repo stars](https://img.shields.io/github/stars/indifferentbroccoli/conan-exiles-enhanced-server-docker?style=for-the-badge&color=6aa84f)](https://github.com/indifferentbroccoli/conan-exiles-enhanced-server-docker)
+[![Discord](https://img.shields.io/discord/798321161082896395?style=for-the-badge&label=Discord&labelColor=5865F2&color=6aa84f)](https://discord.gg/indifferentbroccoli)
+[![Docker Pulls](https://img.shields.io/docker/pulls/indifferentbroccoli/conan-exiles-enhanced-server-docker?style=for-the-badge&color=6aa84f)](https://hub.docker.com/r/indifferentbroccoli/conan-exiles-enhanced-server-docker)
+
+Game server hosting — Fast RAM, high-speed internet — Eat lag for breakfast
+
+[Try our Conan Exiles server hosting free for 2 days!](https://indifferentbroccoli.com/conan-exiles-server-hosting)
+
+## Conan Exiles Enhanced Dedicated Server Docker
+
+A Docker container for running a Conan Exiles Enhanced dedicated server using DepotDownloader.
+
+Conan Exiles Enhanced is the Unreal Engine 5 upgrade of Conan Exiles, featuring Lumen Global Illumination, Nanite Geometry, Virtual Shadow Maps, and a native Linux dedicated server binary.
+
+## Server Requirements
+
+| Resource | Minimum  | Recommended |
+|----------|----------|-------------|
+| CPU      | 2 cores  | 4+ cores    |
+| RAM      | 8GB      | 16GB        |
+| Storage  | 25GB     | 50GB        |
+
+## How to use
+
+Copy the `.env.example` file to a new file called `.env`. Then use either `docker compose` or `docker run`.
+
+### Docker Compose
+
+```yaml
+services:
+  conan-exiles-enhanced:
+    image: indifferentbroccoli/conan-exiles-enhanced-server-docker
+    restart: unless-stopped
+    container_name: conan-exiles-enhanced
+    stop_grace_period: 30s
+    ports:
+      - 7777:7777/udp
+      - 7778:7778/udp
+      - 27015:27015/udp
+    env_file:
+      - .env
+    volumes:
+      - ./server-files:/home/steam/server-files
+```
+
+Then run:
+
+```bash
+docker compose up -d
+```
+
+### Docker Run
+
+```bash
+docker run -d \
+    --restart unless-stopped \
+    --name conan-exiles-enhanced \
+    --stop-timeout 30 \
+    -p 7777:7777/udp \
+    -p 7778:7778/udp \
+    -p 27015:27015/udp \
+    --env-file .env \
+    -v ./server-files:/home/steam/server-files \
+    indifferentbroccoli/conan-exiles-enhanced-server-docker
+```
+
+## Environment Variables
+
+| Variable        | Default | Info |
+|-----------------|---------|------|
+| PUID            | 1000    | User ID for file permissions |
+| PGID            | 1000    | Group ID for file permissions |
+| UPDATE_ON_START | true    | Set to `false` to skip downloading and validating server files on startup |
+| PORT            | 7777    | UDP port the server listens on |
+| QUERY_PORT      | 27015   | UDP port for Steam server browser queries |
+| MAX_PLAYERS     | 40      | Maximum number of players allowed on the server |
+
+> [!NOTE]
+> Server name, password, and all other game settings are configured directly in `server-files/ConanSandbox/Saved/Config/LinuxServer/`.
+
+> [!NOTE]
+> All other game settings (server name, password, max players, PvP, etc.) are configured directly in the ini files inside `server-files/ConanSandbox/Saved/Config/WindowsServer/` (or `LinuxServer/`).
+
+## Port Forwarding
+
+Forward these ports through your firewall/router:
+
+| Port  | Protocol | Purpose              |
+|-------|----------|----------------------|
+| 7777  | UDP      | Game traffic         |
+| 7778  | UDP      | Game traffic (peer)  |
+| 27015 | UDP      | Steam server browser |
+
+See [portforward.com](https://portforward.com) for router-specific guides.
+
+## Volumes
+
+- `/home/steam/server-files` — Server installation files, saves, and configuration
