@@ -12,6 +12,14 @@ PORT="${PORT:-7777}"
 QUERY_PORT="${QUERY_PORT:-27015}"
 RCON_PORT="${RCON_PORT:-25575}"
 MAX_PLAYERS="${MAX_PLAYERS:-40}"
+SERVER_NAME="${SERVER_NAME:-Conan Exiles Enhanced Server}"
+SERVER_PASSWORD="${SERVER_PASSWORD:-}"
+
+CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
+LogInfo "Writing server config"
+mkdir -p "$CONFIG_DIR"
+crudini --set "$CONFIG_DIR/Engine.ini" "/Script/Engine.GameSession" ServerName "$SERVER_NAME"
+crudini --set "$CONFIG_DIR/ServerSettings.ini" "ServerSettings" ServerPassword "$SERVER_PASSWORD"
 
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
 

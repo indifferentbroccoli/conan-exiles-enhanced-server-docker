@@ -40,6 +40,7 @@ services:
       - 7777:7777/udp
       - 7778:7778/udp
       - 27015:27015/udp
+      - 25575:25575/tcp
     env_file:
       - .env
     volumes:
@@ -62,6 +63,7 @@ docker run -d \
     -p 7777:7777/udp \
     -p 7778:7778/udp \
     -p 27015:27015/udp \
+    -p 25575:25575/tcp \
     --env-file .env \
     -v ./server-files:/home/steam/server-files \
     indifferentbroccoli/conan-exiles-enhanced-server-docker
@@ -78,6 +80,21 @@ docker run -d \
 | QUERY_PORT      | 27015   | UDP port for Steam server browser queries |
 | RCON_PORT       | 25575   | TCP port for RCON |
 | MAX_PLAYERS     | 40      | Maximum number of players allowed on the server |
+| SERVER_NAME     | Conan Exiles Enhanced Server | Name shown in the server browser |
+| SERVER_PASSWORD |         | Leave blank for a public server |
+
+## Port Forwarding
+
+Forward these ports through your firewall/router:
+
+| Port  | Protocol | Purpose                        |
+|-------|----------|--------------------------------|
+| 7777  | UDP      | Game traffic                   |
+| 7778  | UDP      | Pinger port (always PORT+1)    |
+| 27015 | UDP      | Steam server browser           |
+| 25575 | TCP      | RCON                           |
+
+See [portforward.com](https://portforward.com) for router-specific guides.
 
 ## Volumes
 

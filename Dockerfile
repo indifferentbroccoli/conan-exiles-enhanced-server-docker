@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl3 \
     libcurl4 \
     gettext-base \
+    crudini \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -39,7 +40,9 @@ ENV HOME=/home/steam \
     QUERY_PORT=27015 \
     RCON_PORT=25575 \
     UPDATE_ON_START=true \
-    MAX_PLAYERS=40
+    MAX_PLAYERS=40 \
+    SERVER_NAME="Conan Exiles Enhanced Server" \
+    SERVER_PASSWORD=""
 
 COPY ./scripts /home/steam/server/
 
