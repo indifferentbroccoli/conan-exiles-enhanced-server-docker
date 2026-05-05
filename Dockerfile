@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl3 \
     libcurl4 \
     gettext-base \
-    crudini \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
