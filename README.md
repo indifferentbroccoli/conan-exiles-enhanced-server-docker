@@ -13,7 +13,7 @@ Game server hosting — Fast RAM, high-speed internet — Eat lag for breakfast
 
 A Docker container for running a Conan Exiles Enhanced dedicated server using DepotDownloader.
 
-Conan Exiles Enhanced is the Unreal Engine 5 upgrade of Conan Exiles, featuring Lumen Global Illumination, Nanite Geometry, Virtual Shadow Maps, and a native Linux dedicated server binary.
+Conan Exiles Enhanced is the Unreal Engine 5 upgrade of Conan Exiles, with stunning visuals and improved performance.
 
 ## Server Requirements
 
