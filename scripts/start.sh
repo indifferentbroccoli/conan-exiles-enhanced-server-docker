@@ -10,6 +10,7 @@ LogAction "Starting Conan Exiles Enhanced Dedicated Server"
 
 PORT="${PORT:-7777}"
 QUERY_PORT="${QUERY_PORT:-27015}"
+RCON_PORT="${RCON_PORT:-25575}"
 MAX_PLAYERS="${MAX_PLAYERS:-40}"
 
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
@@ -26,6 +27,7 @@ exec "$EXEC" \
     /Game/Maps/ConanSandbox/ConanSandbox \
     "-port=${PORT}" \
     "-queryport=${QUERY_PORT}" \
+    "-RconPort=${RCON_PORT}" \
     "-MaxPlayers=${MAX_PLAYERS}" \
     -server \
     -log

@@ -37,6 +37,7 @@ RUN useradd -m -s /bin/bash steam
 ENV HOME=/home/steam \
     PORT=7777 \
     QUERY_PORT=27015 \
+    RCON_PORT=25575 \
     UPDATE_ON_START=true \
     MAX_PLAYERS=40
 

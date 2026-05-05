@@ -74,27 +74,10 @@ docker run -d \
 | PUID            | 1000    | User ID for file permissions |
 | PGID            | 1000    | Group ID for file permissions |
 | UPDATE_ON_START | true    | Set to `false` to skip downloading and validating server files on startup |
-| PORT            | 7777    | UDP port the server listens on |
+| PORT            | 7777    | UDP port the server listens on (pinger port is always PORT+1) |
 | QUERY_PORT      | 27015   | UDP port for Steam server browser queries |
+| RCON_PORT       | 25575   | TCP port for RCON |
 | MAX_PLAYERS     | 40      | Maximum number of players allowed on the server |
-
-> [!NOTE]
-> Server name, password, and all other game settings are configured directly in `server-files/ConanSandbox/Saved/Config/LinuxServer/`.
-
-> [!NOTE]
-> All other game settings (server name, password, max players, PvP, etc.) are configured directly in the ini files inside `server-files/ConanSandbox/Saved/Config/WindowsServer/` (or `LinuxServer/`).
-
-## Port Forwarding
-
-Forward these ports through your firewall/router:
-
-| Port  | Protocol | Purpose              |
-|-------|----------|----------------------|
-| 7777  | UDP      | Game traffic         |
-| 7778  | UDP      | Game traffic (peer)  |
-| 27015 | UDP      | Steam server browser |
-
-See [portforward.com](https://portforward.com) for router-specific guides.
 
 ## Volumes
 
