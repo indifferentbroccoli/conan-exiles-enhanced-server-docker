@@ -25,13 +25,19 @@ fi
 chmod +x "$EXEC"
 LogInfo "Server starting on port ${PORT}, query port ${QUERY_PORT}"
 
-exec "$EXEC" \
-    /Game/Maps/ConanSandbox/ConanSandbox \
-    "-port=${PORT}" \
-    "-queryport=${QUERY_PORT}" \
-    "-RconPort=${RCON_PORT}" \
-    "-MaxPlayers=${MAX_PLAYERS}" \
-    "-ServerName=${SERVER_NAME}" \
-    "-ServerPassword=${SERVER_PASSWORD}" \
-    -server \
+ARGS=(
+    /Game/Maps/ConanSandbox/ConanSandbox
+    "-port=${PORT}"
+    "-queryport=${QUERY_PORT}"
+    "-RconPort=${RCON_PORT}"
+    "-MaxPlayers=${MAX_PLAYERS}"
+    "-ServerName=${SERVER_NAME}"
+    -server
     -log
+)
+
+if [ -n "${SERVER_PASSWORD}" ]; then
+    ARGS+=("-ServerPassword=${SERVER_PASSWORD}")
+fi
+
+exec "$EXEC" "${ARGS[@]}"
