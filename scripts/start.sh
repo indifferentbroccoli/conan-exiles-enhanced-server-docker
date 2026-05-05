@@ -18,8 +18,11 @@ SERVER_PASSWORD="${SERVER_PASSWORD:-}"
 CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
 LogInfo "Writing server config"
 mkdir -p "$CONFIG_DIR"
-crudini --set "$CONFIG_DIR/Engine.ini" "/Script/Engine.GameSession" ServerName "$SERVER_NAME"
-crudini --set "$CONFIG_DIR/ServerSettings.ini" "ServerSettings" ServerPassword "$SERVER_PASSWORD"
+cat > "$CONFIG_DIR/Engine.ini" << EOF
+[/Script/Engine.GameSession]
+ServerName=$SERVER_NAME
+ServerPassword=$SERVER_PASSWORD
+EOF
 
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
 
