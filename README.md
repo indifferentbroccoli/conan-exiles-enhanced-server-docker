@@ -82,6 +82,7 @@ docker run -d \
 | MAX_PLAYERS     | 40      | Maximum number of players allowed on the server |
 | SERVER_NAME     | Conan Exiles Enhanced Server | Name shown in the server browser |
 | SERVER_PASSWORD |         | Leave blank for a public server |
+| RCON_PASSWORD   |         | Password for RCON connections |
 
 ## Port Forwarding
 
