@@ -41,7 +41,8 @@ ENV HOME=/home/steam \
     UPDATE_ON_START=true \
     MAX_PLAYERS=40 \
     SERVER_NAME="Conan Exiles Enhanced Server" \
-    SERVER_PASSWORD=""
+    SERVER_PASSWORD="" \
+    RCON_PASSWORD=""
 
 COPY ./scripts /home/steam/server/
 

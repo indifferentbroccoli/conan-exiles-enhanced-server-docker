@@ -42,6 +42,7 @@ su - steam -c "cd /home/steam/server && \
     MAX_PLAYERS='${MAX_PLAYERS}' \
     SERVER_NAME='${SERVER_NAME}' \
     SERVER_PASSWORD='${SERVER_PASSWORD}' \
+    RCON_PASSWORD='${RCON_PASSWORD}' \
     ./start.sh" &
 
 killpid="$!"
