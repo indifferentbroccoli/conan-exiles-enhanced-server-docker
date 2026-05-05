@@ -15,15 +15,6 @@ MAX_PLAYERS="${MAX_PLAYERS:-40}"
 SERVER_NAME="${SERVER_NAME:-Conan Exiles Enhanced Server}"
 SERVER_PASSWORD="${SERVER_PASSWORD:-}"
 
-CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
-LogInfo "Writing server config"
-mkdir -p "$CONFIG_DIR"
-cat > "$CONFIG_DIR/Engine.ini" << EOF
-[/Script/Engine.GameSession]
-ServerName=$SERVER_NAME
-ServerPassword=$SERVER_PASSWORD
-EOF
-
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
 
 if [ ! -f "$EXEC" ]; then
@@ -40,5 +31,7 @@ exec "$EXEC" \
     "-queryport=${QUERY_PORT}" \
     "-RconPort=${RCON_PORT}" \
     "-MaxPlayers=${MAX_PLAYERS}" \
+    "-ServerName=${SERVER_NAME}" \
+    "-ServerPassword=${SERVER_PASSWORD}" \
     -server \
     -log
