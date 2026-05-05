@@ -16,6 +16,16 @@ SERVER_NAME="${SERVER_NAME:-Conan Exiles Enhanced Server}"
 SERVER_PASSWORD="${SERVER_PASSWORD:-}"
 RCON_PASSWORD="${RCON_PASSWORD:-}"
 
+CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
+mkdir -p "$CONFIG_DIR"
+
+cat > "$CONFIG_DIR/Game.ini" << EOF
+[RconPlugin]
+RconEnabled=1
+RconPassword=${RCON_PASSWORD}
+RconPort=${RCON_PORT}
+EOF
+
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
 
 if [ ! -f "$EXEC" ]; then
@@ -36,16 +46,8 @@ ARGS=(
     -log
 )
 
-if [ -n "${RCON_PORT}" ]; then
-    ARGS+=("-RconPort=${RCON_PORT}")
-fi
-
 if [ -n "${SERVER_PASSWORD}" ]; then
     ARGS+=("-ServerPassword=${SERVER_PASSWORD}")
-fi
-
-if [ -n "${RCON_PASSWORD}" ]; then
-    ARGS+=("-RconPassword=${RCON_PASSWORD}")
 fi
 
 exec "$EXEC" "${ARGS[@]}"
