@@ -37,7 +37,9 @@ if [ -n "${MODS}" ]; then
     IFS=',' read -ra MOD_IDS <<< "${MODS}"
     for MOD_ID in "${MOD_IDS[@]}"; do
         MOD_ID="${MOD_ID// /}"
-        /depotdownloader/DepotDownloader -app 440900 -pubfile "$MOD_ID" -dir "$MODS_DIR/$MOD_ID" -validate
+        LogInfo "Downloading mod $MOD_ID..."
+        /depotdownloader/DepotDownloader -app 440900 -pubfile "$MOD_ID" -dir "$MODS_DIR/$MOD_ID" -validate > /dev/null 2>&1
+        LogInfo "Mod $MOD_ID installed."
         find "$MODS_DIR/$MOD_ID" -name "*.pak" | while IFS= read -r PAK_FILE; do
             echo "*$(basename "$PAK_FILE")" >> "$MODS_DIR/modlist.txt"
         done
