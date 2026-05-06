@@ -33,12 +33,15 @@ if [ -n "${MODS}" ]; then
     LogAction "Installing mods"
     MODS_DIR="$SERVER_FILES/ConanSandbox/Mods"
     mkdir -p "$MODS_DIR"
+    : > "$MODS_DIR/modlist.txt"
     IFS=',' read -ra MOD_IDS <<< "${MODS}"
     for MOD_ID in "${MOD_IDS[@]}"; do
-        /depotdownloader/DepotDownloader -app 440900 -pubfile "${MOD_ID// /}" -dir "$MODS_DIR/${MOD_ID// /}" -validate
+        MOD_ID="${MOD_ID// /}"
+        /depotdownloader/DepotDownloader -app 440900 -pubfile "$MOD_ID" -dir "$MODS_DIR/$MOD_ID" -validate
+        find "$MODS_DIR/$MOD_ID" -name "*.pak" | while IFS= read -r PAK_FILE; do
+            echo "*$(basename "$PAK_FILE")" >> "$MODS_DIR/modlist.txt"
+        done
     done
-    find "$MODS_DIR" -name "*.pak" -not -path "$MODS_DIR/*.pak" -exec cp {} "$MODS_DIR/" \;
-    find "$MODS_DIR" -maxdepth 1 -name "*.pak" | sort | sed 's|.*/|*|' > "$MODS_DIR/modlist.txt"
 fi
 
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
