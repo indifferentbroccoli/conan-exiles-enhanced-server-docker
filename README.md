@@ -83,6 +83,8 @@ docker run -d \
 | SERVER_NAME     | Conan Exiles Enhanced Server | Name shown in the server browser |
 | SERVER_PASSWORD |         | Leave blank for a public server |
 | RCON_PASSWORD   |         | Password for RCON connections |
+| ADMIN_PASSWORD  |         | Server admin password |
+| MODS            |         | Comma-separated Steam Workshop mod IDs (e.g. `880454836,1159180273`) |
 
 ## Port Forwarding
 

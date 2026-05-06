@@ -43,6 +43,8 @@ su - steam -c "cd /home/steam/server && \
     SERVER_NAME='${SERVER_NAME}' \
     SERVER_PASSWORD='${SERVER_PASSWORD}' \
     RCON_PASSWORD='${RCON_PASSWORD}' \
+    ADMIN_PASSWORD='${ADMIN_PASSWORD}' \
+    MODS='${MODS}' \
     ./start.sh" &
 
 killpid="$!"

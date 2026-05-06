@@ -16,6 +16,9 @@ SERVER_NAME="${SERVER_NAME:-Conan Exiles Enhanced Server}"
 SERVER_PASSWORD="${SERVER_PASSWORD:-}"
 RCON_PASSWORD="${RCON_PASSWORD:-}"
 
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-}"
+MODS="${MODS:-}"
+
 CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
 mkdir -p "$CONFIG_DIR"
 
@@ -25,6 +28,18 @@ RconEnabled=1
 RconPassword=${RCON_PASSWORD}
 RconPort=${RCON_PORT}
 EOF
+
+if [ -n "${MODS}" ]; then
+    LogAction "Installing mods"
+    MODS_DIR="$SERVER_FILES/ConanSandbox/Mods"
+    mkdir -p "$MODS_DIR"
+    IFS=',' read -ra MOD_IDS <<< "${MODS}"
+    for MOD_ID in "${MOD_IDS[@]}"; do
+        /depotdownloader/DepotDownloader -app 440900 -pubfile "${MOD_ID// /}" -dir "$MODS_DIR/${MOD_ID// /}" -validate
+    done
+    find "$MODS_DIR" -name "*.pak" -not -path "$MODS_DIR/*.pak" -exec cp {} "$MODS_DIR/" \;
+    find "$MODS_DIR" -maxdepth 1 -name "*.pak" | sort | sed 's|.*/|*|' > "$MODS_DIR/modlist.txt"
+fi
 
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
 
@@ -48,6 +63,10 @@ ARGS=(
 
 if [ -n "${SERVER_PASSWORD}" ]; then
     ARGS+=("-ServerPassword=${SERVER_PASSWORD}")
+fi
+
+if [ -n "${ADMIN_PASSWORD}" ]; then
+    ARGS+=("-AdminPassword=${ADMIN_PASSWORD}")
 fi
 
 exec "$EXEC" "${ARGS[@]}"
