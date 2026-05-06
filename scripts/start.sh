@@ -29,6 +29,10 @@ RconPassword=${RCON_PASSWORD}
 RconPort=${RCON_PORT}
 EOF
 
+if [ -n "${ADMIN_PASSWORD}" ]; then
+    set_ini_value "$CONFIG_DIR/ServerSettings.ini" "ServerSettings" "AdminPassword" "${ADMIN_PASSWORD}"
+fi
+
 if [ -n "${MODS}" ]; then
     LogAction "Installing mods"
     MODS_DIR="$SERVER_FILES/ConanSandbox/Mods"
@@ -68,10 +72,6 @@ ARGS=(
 
 if [ -n "${SERVER_PASSWORD}" ]; then
     ARGS+=("-ServerPassword=${SERVER_PASSWORD}")
-fi
-
-if [ -n "${ADMIN_PASSWORD}" ]; then
-    ARGS+=("-AdminPassword=${ADMIN_PASSWORD}")
 fi
 
 exec "$EXEC" "${ARGS[@]}"

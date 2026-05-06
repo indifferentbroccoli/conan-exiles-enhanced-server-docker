@@ -39,8 +39,11 @@ Log() {
   printf "$color%s$RESET$LINE" "$prefix$message$suffix"
 }
 
+set_ini_value() {
+  crudini --set "$1" "$2" "$3" "$4"
+}
+
 install() {
-  LogAction "Starting server install"
   LogInfo "Installing Conan Exiles Enhanced Dedicated Server"
 
   /depotdownloader/DepotDownloader \
