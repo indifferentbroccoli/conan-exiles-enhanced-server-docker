@@ -45,7 +45,7 @@ if [ -n "${MODS}" ]; then
         /depotdownloader/DepotDownloader -app 440900 -pubfile "$MOD_ID" -dir "$MODS_DIR/$MOD_ID" -validate > /dev/null 2>&1
         LogInfo "Mod $MOD_ID installed."
         find "$MODS_DIR/$MOD_ID" -name "*.pak" | while IFS= read -r PAK_FILE; do
-            echo "*$(basename "$PAK_FILE")" >> "$MODS_DIR/modlist.txt"
+            echo "*${MOD_ID}\\$(basename "$PAK_FILE")" >> "$MODS_DIR/modlist.txt"
         done
     done
 fi
