@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4 \
     gettext-base \
     crudini \
+    python3-minimal \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -45,7 +46,10 @@ ENV HOME=/home/steam \
     SERVER_PASSWORD="" \
     RCON_PASSWORD="" \
     ADMIN_PASSWORD="" \
-    MODS=""
+    MODS="" \
+    MOD_WATCHDOG_ENABLED=false \
+    MOD_WATCHDOG_INTERVAL=3600 \
+    MOD_WATCHDOG_RESTART_DELAY=300
 
 COPY ./scripts /home/steam/server/
 

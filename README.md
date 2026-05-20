@@ -75,16 +75,32 @@ docker run -d \
 |-----------------|---------|------|
 | PUID            | 1000    | User ID for file permissions |
 | PGID            | 1000    | Group ID for file permissions |
-| UPDATE_ON_START | true    | Set to `false` to skip downloading and validating server files on startup |
 | PORT            | 7777    | UDP port the server listens on (pinger port is always PORT+1) |
 | QUERY_PORT      | 27015   | UDP port for Steam server browser queries |
 | RCON_PORT       | 25575   | TCP port for RCON |
 | MAX_PLAYERS     | 40      | Maximum number of players allowed on the server |
+| UPDATE_ON_START | true    | Set to `false` to skip downloading and validating server files on startup |
 | SERVER_NAME     | Conan Exiles Enhanced Server | Name shown in the server browser |
 | SERVER_PASSWORD |         | Leave blank for a public server |
 | RCON_PASSWORD   |         | Password for RCON connections |
 | ADMIN_PASSWORD  |         | Server admin password |
 | MODS            |         | Comma-separated Steam Workshop mod IDs (e.g. `880454836,1159180273`) |
+
+### Mod Watchdog
+
+| Variable                    | Default | Info |
+|-----------------------------|---------|------|
+| MOD_WATCHDOG_ENABLED        | false   | Set to `true` to enable automatic mod update detection and server restart. Requires `UPDATE_ON_START=true` |
+| MOD_WATCHDOG_INTERVAL       | 3600    | How often (in seconds) to check Steam Workshop for mod updates |
+| MOD_WATCHDOG_RESTART_DELAY  | 300     | Seconds to wait before restarting after an update is detected. Countdown announcements are broadcast to players via RCON |
+
+When `MOD_WATCHDOG_ENABLED=true` and `MODS` is set, the watchdog runs in the background and periodically queries the Steam Workshop API for each configured mod. If a newer version is detected, it:
+
+1. Broadcasts a restart warning to all connected players via RCON (requires `RCON_PASSWORD` to be set).
+2. Sends countdown announcements at regular intervals until `MOD_WATCHDOG_RESTART_DELAY` elapses.
+3. Gracefully stops the server; Docker's `restart: unless-stopped` policy then restarts the container, which re-downloads the updated mod(s) before launching the server again.
+
+> **Important:** `UPDATE_ON_START` must be `true` (the default) when using the mod watchdog. If it is `false`, mods will not be re-downloaded on container restart, causing the watchdog to detect the same update on every start and loop indefinitely. The watchdog will refuse to start and log an error if this condition is detected.
 
 ## Port Forwarding
 
