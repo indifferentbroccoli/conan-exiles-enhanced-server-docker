@@ -17,25 +17,6 @@ if [ -z "$MODS" ]; then
     exit 0
 fi
 
-# Query the Steam Workshop API for a mod's current time_updated timestamp.
-# Prints the Unix timestamp on success, or nothing on failure.
-get_workshop_timestamp() {
-    local mod_id="$1"
-    curl -sf -X POST \
-        "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
-        --data "itemcount=1&publishedfileids[0]=${mod_id}" \
-        | python3 -c "
-import json, sys
-try:
-    d = json.load(sys.stdin)
-    ts = d['response']['publishedfiledetails'][0].get('time_updated', 0)
-    if ts:
-        print(ts)
-except Exception:
-    pass
-" 2>/dev/null
-}
-
 # Read the stored timestamp for a mod from the timestamps file.
 get_stored_timestamp() {
     local mod_id="$1"
@@ -111,8 +92,8 @@ do_restart() {
 
     # Initial announcement
     if [ "$delay" -ge 60 ]; then
-        local mins=$(( delay / 60 ))
-        send_rcon_broadcast "Server will restart for mod updates in ${mins} minute(s)."
+        local minutes=$(( delay / 60 ))
+        send_rcon_broadcast "Server will restart for mod updates in ${minutes} minute(s)."
     else
         send_rcon_broadcast "Server will restart for mod updates in ${delay} second(s)."
     fi
@@ -126,8 +107,8 @@ do_restart() {
             sleep $(( remaining - checkpoint ))
             remaining="$checkpoint"
             if [ "$checkpoint" -ge 60 ]; then
-                local mins=$(( checkpoint / 60 ))
-                send_rcon_broadcast "Server restart in ${mins} minute(s)."
+                local minutes=$(( checkpoint / 60 ))
+                send_rcon_broadcast "Server restart in ${minutes} minute(s)."
             else
                 send_rcon_broadcast "Server restart in ${checkpoint} second(s)."
             fi

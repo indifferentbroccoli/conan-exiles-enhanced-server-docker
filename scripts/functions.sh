@@ -43,6 +43,26 @@ set_ini_value() {
   crudini --set "$1" "$2" "$3" "$4"
 }
 
+# Query the Steam Workshop API for a published file's time_updated timestamp.
+# Usage: get_workshop_timestamp <mod_id>
+# Prints the Unix timestamp on success, or nothing on failure.
+get_workshop_timestamp() {
+    local mod_id="$1"
+    curl -sf -X POST \
+        "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
+        --data "itemcount=1&publishedfileids[0]=${mod_id}" \
+        | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    ts = d['response']['publishedfiledetails'][0].get('time_updated', 0)
+    if ts:
+        print(ts)
+except Exception:
+    pass
+" 2>/dev/null
+}
+
 install() {
   LogInfo "Installing Conan Exiles Enhanced Dedicated Server"
 

@@ -8,6 +8,7 @@ import sys
 SERVERDATA_AUTH = 3
 SERVERDATA_EXECCOMMAND = 2
 SERVERDATA_AUTH_RESPONSE = 2
+RCON_TIMEOUT = 10
 
 
 def _recvall(sock, n):
@@ -39,7 +40,7 @@ def _recv_packet(sock):
 
 def rcon_exec(host, port, password, command):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.settimeout(10)
+        s.settimeout(RCON_TIMEOUT)
         s.connect((host, int(port)))
 
         # Authenticate

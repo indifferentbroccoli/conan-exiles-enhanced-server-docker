@@ -49,19 +49,7 @@ if [ -n "${MODS}" ]; then
             echo "*${MOD_ID}\\$(basename "$PAK_FILE")" >> "$MODS_DIR/modlist.txt"
         done
         # Store the current Steam Workshop timestamp so the mod watchdog has a baseline
-        MOD_TS=$(curl -sf -X POST \
-            "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
-            --data "itemcount=1&publishedfileids[0]=${MOD_ID}" \
-            | python3 -c "
-import json, sys
-try:
-    d = json.load(sys.stdin)
-    ts = d['response']['publishedfiledetails'][0].get('time_updated', 0)
-    if ts:
-        print(ts)
-except Exception:
-    pass
-" 2>/dev/null)
+        MOD_TS=$(get_workshop_timestamp "$MOD_ID")
         if [ -n "$MOD_TS" ]; then
             if [ -f "$TIMESTAMPS_FILE" ] && grep -q "^${MOD_ID}=" "$TIMESTAMPS_FILE"; then
                 sed -i "s|^${MOD_ID}=.*|${MOD_ID}=${MOD_TS}|" "$TIMESTAMPS_FILE"
