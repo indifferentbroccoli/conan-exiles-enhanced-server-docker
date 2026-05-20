@@ -90,7 +90,7 @@ docker run -d \
 
 | Variable                    | Default | Info |
 |-----------------------------|---------|------|
-| MOD_WATCHDOG_ENABLED        | false   | Set to `true` to enable automatic mod update detection and server restart |
+| MOD_WATCHDOG_ENABLED        | false   | Set to `true` to enable automatic mod update detection and server restart. Requires `UPDATE_ON_START=true` |
 | MOD_WATCHDOG_INTERVAL       | 3600    | How often (in seconds) to check Steam Workshop for mod updates |
 | MOD_WATCHDOG_RESTART_DELAY  | 300     | Seconds to wait before restarting after an update is detected. Countdown announcements are broadcast to players via RCON |
 
@@ -99,6 +99,8 @@ When `MOD_WATCHDOG_ENABLED=true` and `MODS` is set, the watchdog runs in the bac
 1. Broadcasts a restart warning to all connected players via RCON (requires `RCON_PASSWORD` to be set).
 2. Sends countdown announcements at regular intervals until `MOD_WATCHDOG_RESTART_DELAY` elapses.
 3. Gracefully stops the server; Docker's `restart: unless-stopped` policy then restarts the container, which re-downloads the updated mod(s) before launching the server again.
+
+> **Important:** `UPDATE_ON_START` must be `true` (the default) when using the mod watchdog. If it is `false`, mods will not be re-downloaded on container restart, causing the watchdog to detect the same update on every start and loop indefinitely. The watchdog will refuse to start and log an error if this condition is detected.
 
 ## Port Forwarding
 
