@@ -48,4 +48,16 @@ su - steam -c "cd /home/steam/server && \
     ./start.sh" &
 
 killpid="$!"
+
+# Start the mod watchdog as steam user if enabled and mods are configured
+if [ "${MOD_WATCHDOG_ENABLED:-false}" = "true" ] && [ -n "${MODS}" ]; then
+    su - steam -c "cd /home/steam/server && \
+        MODS='${MODS}' \
+        RCON_PORT='${RCON_PORT}' \
+        RCON_PASSWORD='${RCON_PASSWORD}' \
+        MOD_WATCHDOG_INTERVAL='${MOD_WATCHDOG_INTERVAL:-3600}' \
+        MOD_WATCHDOG_RESTART_DELAY='${MOD_WATCHDOG_RESTART_DELAY:-300}' \
+        ./mod_watchdog.sh" &
+fi
+
 wait "$killpid"

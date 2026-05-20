@@ -37,6 +37,7 @@ if [ -n "${MODS}" ]; then
     LogAction "Installing mods"
     MODS_DIR="$SERVER_FILES/ConanSandbox/Mods"
     mkdir -p "$MODS_DIR"
+    TIMESTAMPS_FILE="$MODS_DIR/.mod_timestamps"
     : > "$MODS_DIR/modlist.txt"
     IFS=',' read -ra MOD_IDS <<< "${MODS}"
     for MOD_ID in "${MOD_IDS[@]}"; do
@@ -47,6 +48,28 @@ if [ -n "${MODS}" ]; then
         find "$MODS_DIR/$MOD_ID" -name "*.pak" | while IFS= read -r PAK_FILE; do
             echo "*${MOD_ID}\\$(basename "$PAK_FILE")" >> "$MODS_DIR/modlist.txt"
         done
+        # Store the current Steam Workshop timestamp so the mod watchdog has a baseline
+        MOD_TS=$(curl -sf -X POST \
+            "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
+            --data "itemcount=1&publishedfileids[0]=${MOD_ID}" \
+            | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    ts = d['response']['publishedfiledetails'][0].get('time_updated', 0)
+    if ts:
+        print(ts)
+except Exception:
+    pass
+" 2>/dev/null)
+        if [ -n "$MOD_TS" ]; then
+            if [ -f "$TIMESTAMPS_FILE" ] && grep -q "^${MOD_ID}=" "$TIMESTAMPS_FILE"; then
+                sed -i "s|^${MOD_ID}=.*|${MOD_ID}=${MOD_TS}|" "$TIMESTAMPS_FILE"
+            else
+                echo "${MOD_ID}=${MOD_TS}" >> "$TIMESTAMPS_FILE"
+            fi
+            LogInfo "Mod $MOD_ID timestamp recorded: $MOD_TS"
+        fi
     done
 fi
 

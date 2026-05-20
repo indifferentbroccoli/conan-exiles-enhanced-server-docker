@@ -86,6 +86,20 @@ docker run -d \
 | ADMIN_PASSWORD  |         | Server admin password |
 | MODS            |         | Comma-separated Steam Workshop mod IDs (e.g. `880454836,1159180273`) |
 
+### Mod Watchdog
+
+| Variable                    | Default | Info |
+|-----------------------------|---------|------|
+| MOD_WATCHDOG_ENABLED        | false   | Set to `true` to enable automatic mod update detection and server restart |
+| MOD_WATCHDOG_INTERVAL       | 3600    | How often (in seconds) to check Steam Workshop for mod updates |
+| MOD_WATCHDOG_RESTART_DELAY  | 300     | Seconds to wait before restarting after an update is detected. Countdown announcements are broadcast to players via RCON |
+
+When `MOD_WATCHDOG_ENABLED=true` and `MODS` is set, the watchdog runs in the background and periodically queries the Steam Workshop API for each configured mod. If a newer version is detected, it:
+
+1. Broadcasts a restart warning to all connected players via RCON (requires `RCON_PASSWORD` to be set).
+2. Sends countdown announcements at regular intervals until `MOD_WATCHDOG_RESTART_DELAY` elapses.
+3. Gracefully stops the server; Docker's `restart: unless-stopped` policy then restarts the container, which re-downloads the updated mod(s) before launching the server again.
+
 ## Port Forwarding
 
 Forward these ports through your firewall/router:
