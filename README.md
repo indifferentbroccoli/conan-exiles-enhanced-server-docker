@@ -75,11 +75,11 @@ docker run -d \
 |-----------------|---------|------|
 | PUID            | 1000    | User ID for file permissions |
 | PGID            | 1000    | Group ID for file permissions |
-| UPDATE_ON_START | true    | Set to `false` to skip downloading and validating server files on startup |
 | PORT            | 7777    | UDP port the server listens on (pinger port is always PORT+1) |
 | QUERY_PORT      | 27015   | UDP port for Steam server browser queries |
 | RCON_PORT       | 25575   | TCP port for RCON |
 | MAX_PLAYERS     | 40      | Maximum number of players allowed on the server |
+| UPDATE_ON_START | true    | Set to `false` to skip downloading and validating server files on startup |
 | SERVER_NAME     | Conan Exiles Enhanced Server | Name shown in the server browser |
 | SERVER_PASSWORD |         | Leave blank for a public server |
 | RCON_PASSWORD   |         | Password for RCON connections |
