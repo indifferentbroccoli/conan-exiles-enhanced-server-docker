@@ -51,16 +51,7 @@ get_workshop_timestamp() {
     curl -sf -X POST \
         "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
         --data "itemcount=1&publishedfileids[0]=${mod_id}" \
-        | python3 -c "
-import json, sys
-try:
-    d = json.load(sys.stdin)
-    ts = d['response']['publishedfiledetails'][0].get('time_updated', 0)
-    if ts:
-        print(ts)
-except Exception:
-    pass
-" 2>/dev/null
+        | jq -r '.response.publishedfiledetails[0].time_updated // empty' 2>/dev/null
 }
 
 install() {

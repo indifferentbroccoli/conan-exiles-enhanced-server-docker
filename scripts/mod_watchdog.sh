@@ -43,8 +43,7 @@ send_rcon_broadcast() {
     if [ -z "$RCON_PASSWORD" ]; then
         return 0
     fi
-    python3 /home/steam/server/rcon.py \
-        "127.0.0.1" "$RCON_PORT" "$RCON_PASSWORD" \
+    rcon --address "127.0.0.1:$RCON_PORT" --password "$RCON_PASSWORD" \
         "broadcast $message" 2>/dev/null || true
 }
 

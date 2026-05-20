@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4 \
     gettext-base \
     crudini \
-    python3-minimal \
+    jq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -23,6 +23,18 @@ RUN curl -sL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
     /tmp/dotnet-install.sh --channel 8.0 --runtime dotnet --install-dir /usr/share/dotnet && \
     ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
     rm /tmp/dotnet-install.sh
+
+# Download rcon-cli
+ARG RCON_CLI_VERSION=0.10.3
+ARG RCON_CLI_SHA256=6962a641ebf9a5957bd0cda1b8acf3e34a23686ae709f6c6a14ac3898521a5cc
+RUN curl -sL \
+    "https://github.com/gorcon/rcon-cli/releases/download/v${RCON_CLI_VERSION}/rcon-${RCON_CLI_VERSION}-amd64_linux.tar.gz" \
+    -o /tmp/rcon.tar.gz && \
+    echo "${RCON_CLI_SHA256}  /tmp/rcon.tar.gz" | sha256sum -c - && \
+    tar -xzf /tmp/rcon.tar.gz --strip-components=1 -C /usr/local/bin \
+        "rcon-${RCON_CLI_VERSION}-amd64_linux/rcon" && \
+    chmod +x /usr/local/bin/rcon && \
+    rm /tmp/rcon.tar.gz
 
 # Download DepotDownloader
 ARG DEPOT_DOWNLOADER_VERSION=3.4.0
