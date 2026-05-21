@@ -32,7 +32,7 @@ RUN curl -sL \
     -o /tmp/rcon.tar.gz && \
     echo "${RCON_CLI_SHA256}  /tmp/rcon.tar.gz" | sha256sum -c - && \
     tar -xzf /tmp/rcon.tar.gz --strip-components=1 -C /usr/local/bin \
-        "rcon-${RCON_CLI_VERSION}-amd64_linux/rcon" && \
+    "rcon-${RCON_CLI_VERSION}-amd64_linux/rcon" && \
     chmod +x /usr/local/bin/rcon && \
     rm /tmp/rcon.tar.gz
 
@@ -73,6 +73,6 @@ RUN mkdir -p /home/steam/server-files && \
 WORKDIR /home/steam/server
 
 HEALTHCHECK --start-period=5m \
-            CMD pgrep -f "ConanSandboxServer-Linux-Shipping" > /dev/null || exit 1
+    CMD pgrep -f "ConanSandboxServer-Linux-Shipping" > /dev/null || exit 1
 
 ENTRYPOINT ["/home/steam/server/init.sh"]
