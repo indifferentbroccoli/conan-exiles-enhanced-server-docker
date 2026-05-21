@@ -58,7 +58,7 @@ if [ "${MOD_WATCHDOG_ENABLED:-false}" = "true" ] && [ -n "${MODS}" ]; then
             MODS='${MODS}' \
             RCON_PORT='${RCON_PORT}' \
             RCON_PASSWORD='${RCON_PASSWORD}' \
-            MOD_WATCHDOG_INTERVAL='${MOD_WATCHDOG_INTERVAL:-3600}' \
+            MOD_WATCHDOG_INTERVAL='${MOD_WATCHDOG_INTERVAL:-600}' \
             MOD_WATCHDOG_RESTART_DELAY='${MOD_WATCHDOG_RESTART_DELAY:-300}' \
             ./mod_watchdog.sh" &
     fi

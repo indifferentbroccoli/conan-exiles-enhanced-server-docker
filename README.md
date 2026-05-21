@@ -88,11 +88,11 @@ docker run -d \
 
 ### Mod Watchdog
 
-| Variable                    | Default | Info |
-|-----------------------------|---------|------|
-| MOD_WATCHDOG_ENABLED        | false   | Set to `true` to enable automatic mod update detection and server restart. Requires `UPDATE_ON_START=true` |
-| MOD_WATCHDOG_INTERVAL       | 3600    | How often (in seconds) to check Steam Workshop for mod updates |
-| MOD_WATCHDOG_RESTART_DELAY  | 300     | Seconds to wait before restarting after an update is detected. Countdown announcements are broadcast to players via RCON |
+| Variable                   | Default | Info                                                                                                                     |
+| -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| MOD_WATCHDOG_ENABLED       | false   | Set to `true` to enable automatic mod update detection and server restart. Requires `UPDATE_ON_START=true`               |
+| MOD_WATCHDOG_INTERVAL      | 600     | How often (in seconds) to check Steam Workshop for mod updates                                                           |
+| MOD_WATCHDOG_RESTART_DELAY | 300     | Seconds to wait before restarting after an update is detected. Countdown announcements are broadcast to players via RCON |
 
 When `MOD_WATCHDOG_ENABLED=true` and `MODS` is set, the watchdog runs in the background and periodically queries the Steam Workshop API for each configured mod. If a newer version is detected, it:
 

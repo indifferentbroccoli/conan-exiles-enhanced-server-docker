@@ -5,7 +5,7 @@ source "/home/steam/server/functions.sh"
 MODS="${MODS:-}"
 RCON_PORT="${RCON_PORT:-25575}"
 RCON_PASSWORD="${RCON_PASSWORD:-}"
-MOD_WATCHDOG_INTERVAL="${MOD_WATCHDOG_INTERVAL:-3600}"
+MOD_WATCHDOG_INTERVAL="${MOD_WATCHDOG_INTERVAL:-600}"
 MOD_WATCHDOG_RESTART_DELAY="${MOD_WATCHDOG_RESTART_DELAY:-300}"
 
 MODS_DIR="/home/steam/server-files/ConanSandbox/Mods"
@@ -137,10 +137,14 @@ LogAction "Mod watchdog started (interval=${MOD_WATCHDOG_INTERVAL}s, restart_del
 sleep 60
 
 while true; do
+    LogAction "Mod watchdog: Running update check for configured mods."
     if check_for_updates; then
+        LogAction "Mod watchdog: Update(s) detected. Restart sequence will begin."
         do_restart
         # Exit after triggering restart; the new container instance starts a fresh watchdog
         exit 0
+    else
+        LogAction "Mod watchdog: No updates detected in this check cycle."
     fi
     sleep "$MOD_WATCHDOG_INTERVAL"
 done

@@ -60,7 +60,7 @@ ENV HOME=/home/steam \
     ADMIN_PASSWORD="" \
     MODS="" \
     MOD_WATCHDOG_ENABLED=false \
-    MOD_WATCHDOG_INTERVAL=3600 \
+    MOD_WATCHDOG_INTERVAL=600 \
     MOD_WATCHDOG_RESTART_DELAY=300
 
 COPY ./scripts /home/steam/server/
