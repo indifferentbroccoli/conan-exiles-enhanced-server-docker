@@ -54,6 +54,29 @@ get_workshop_timestamp() {
         | jq -r '.response.publishedfiledetails[0].time_updated // empty' 2>/dev/null
 }
 
+# Query the Steam Workshop API for multiple published files in one request.
+# Usage: get_workshop_timestamps_batch <mod_id> [<mod_id> ...]
+# Prints one line per returned mod in the format: <mod_id>=<timestamp>
+get_workshop_timestamps_batch() {
+  local mod_ids=("$@")
+  local count="${#mod_ids[@]}"
+
+  if [ "$count" -eq 0 ]; then
+    return 0
+  fi
+
+  local payload="itemcount=${count}"
+  local i
+  for i in "${!mod_ids[@]}"; do
+    payload+="&publishedfileids[${i}]=${mod_ids[$i]}"
+  done
+
+  curl -sf -X POST \
+    "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
+    --data "$payload" \
+    | jq -r '.response.publishedfiledetails[]? | "\(.publishedfileid // empty)=\(.time_updated // empty)"' 2>/dev/null
+}
+
 install() {
   LogInfo "Installing Conan Exiles Enhanced Dedicated Server"
 

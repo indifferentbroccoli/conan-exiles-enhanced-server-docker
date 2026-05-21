@@ -39,26 +39,45 @@ if [ -n "${MODS}" ]; then
     mkdir -p "$MODS_DIR"
     TIMESTAMPS_FILE="$MODS_DIR/.mod_timestamps"
     : > "$MODS_DIR/modlist.txt"
+    CLEAN_MOD_IDS=()
     IFS=',' read -ra MOD_IDS <<< "${MODS}"
     for MOD_ID in "${MOD_IDS[@]}"; do
         MOD_ID="${MOD_ID// /}"
+        [ -z "$MOD_ID" ] && continue
+        CLEAN_MOD_IDS+=("$MOD_ID")
         LogInfo "Downloading mod $MOD_ID..."
         /depotdownloader/DepotDownloader -app 440900 -pubfile "$MOD_ID" -dir "$MODS_DIR/$MOD_ID" -validate > /dev/null 2>&1
         LogInfo "Mod $MOD_ID installed."
         find "$MODS_DIR/$MOD_ID" -name "*.pak" | while IFS= read -r PAK_FILE; do
             echo "*${MOD_ID}\\$(basename "$PAK_FILE")" >> "$MODS_DIR/modlist.txt"
         done
-        # Store the current Steam Workshop timestamp so the mod watchdog has a baseline
-        MOD_TS=$(get_workshop_timestamp "$MOD_ID")
-        if [ -n "$MOD_TS" ]; then
-            if [ -f "$TIMESTAMPS_FILE" ] && grep -q "^${MOD_ID}=" "$TIMESTAMPS_FILE"; then
-                sed -i "s|^${MOD_ID}=.*|${MOD_ID}=${MOD_TS}|" "$TIMESTAMPS_FILE"
-            else
-                echo "${MOD_ID}=${MOD_TS}" >> "$TIMESTAMPS_FILE"
-            fi
-            LogInfo "Mod $MOD_ID timestamp recorded: $MOD_TS"
-        fi
     done
+
+    # Store current Workshop timestamps in a single API request for watchdog baseline.
+    if [ "${#CLEAN_MOD_IDS[@]}" -gt 0 ]; then
+        BATCH_TIMESTAMPS=$(get_workshop_timestamps_batch "${CLEAN_MOD_IDS[@]}")
+        declare -A LATEST_TS_BY_MOD
+        if [ -n "$BATCH_TIMESTAMPS" ]; then
+            while IFS='=' read -r id ts; do
+                [ -z "$id" ] && continue
+                LATEST_TS_BY_MOD["$id"]="$ts"
+            done <<< "$BATCH_TIMESTAMPS"
+        fi
+
+        for MOD_ID in "${CLEAN_MOD_IDS[@]}"; do
+            MOD_TS="${LATEST_TS_BY_MOD[$MOD_ID]}"
+            if [ -n "$MOD_TS" ]; then
+                if [ -f "$TIMESTAMPS_FILE" ] && grep -q "^${MOD_ID}=" "$TIMESTAMPS_FILE"; then
+                    sed -i "s|^${MOD_ID}=.*|${MOD_ID}=${MOD_TS}|" "$TIMESTAMPS_FILE"
+                else
+                    echo "${MOD_ID}=${MOD_TS}" >> "$TIMESTAMPS_FILE"
+                fi
+                LogInfo "Mod $MOD_ID timestamp recorded: $MOD_TS"
+            else
+                LogWarn "Could not record baseline timestamp for mod $MOD_ID"
+            fi
+        done
+    fi
 fi
 
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"

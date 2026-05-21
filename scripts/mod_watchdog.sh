@@ -51,14 +51,36 @@ send_rcon_broadcast() {
 # Returns 0 (true) if at least one update is detected, 1 otherwise.
 check_for_updates() {
     local updates_found=false
+    local mod_ids=()
 
     IFS=',' read -ra MOD_IDS <<< "$MODS"
     for MOD_ID in "${MOD_IDS[@]}"; do
         MOD_ID="${MOD_ID// /}"
         [ -z "$MOD_ID" ] && continue
+        mod_ids+=("$MOD_ID")
+    done
+
+    if [ "${#mod_ids[@]}" -eq 0 ]; then
+        LogWarn "Mod watchdog: MODS contains no valid IDs after parsing, skipping check."
+        return 1
+    fi
+
+    # Fetch all current timestamps in a single API call.
+    local batch_output
+    batch_output=$(get_workshop_timestamps_batch "${mod_ids[@]}")
+
+    declare -A current_ts_by_mod
+    if [ -n "$batch_output" ]; then
+        while IFS='=' read -r id ts; do
+            [ -z "$id" ] && continue
+            current_ts_by_mod["$id"]="$ts"
+        done <<< "$batch_output"
+    fi
+
+    for MOD_ID in "${mod_ids[@]}"; do
 
         local current_ts
-        current_ts=$(get_workshop_timestamp "$MOD_ID")
+        current_ts="${current_ts_by_mod[$MOD_ID]}"
 
         if [ -z "$current_ts" ]; then
             LogWarn "Mod watchdog: Could not fetch timestamp for mod $MOD_ID, skipping."
@@ -137,7 +159,7 @@ LogAction "Mod watchdog started (interval=${MOD_WATCHDOG_INTERVAL}s, restart_del
 sleep 60
 
 while true; do
-    LogAction "Mod watchdog: Running update check for configured mods."
+    LogAction "Mod watchdog: Running update check for configured mods (single batched API call)."
     if check_for_updates; then
         LogAction "Mod watchdog: Update(s) detected. Restart sequence will begin."
         do_restart
