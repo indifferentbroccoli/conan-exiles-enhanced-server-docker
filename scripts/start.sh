@@ -3,8 +3,12 @@
 source "/home/steam/server/functions.sh"
 
 SERVER_FILES="/home/steam/server-files"
+WATCHDOG_READY_FILE="$SERVER_FILES/.watchdog_ready"
 
 cd "$SERVER_FILES" || exit
+
+# Clear previous readiness marker; it will be recreated once mod baseline refresh completes.
+rm -f "$WATCHDOG_READY_FILE"
 
 LogAction "Starting Conan Exiles Enhanced Dedicated Server"
 
@@ -79,6 +83,9 @@ if [ -n "${MODS}" ]; then
         done
     fi
 fi
+
+# Signal watchdog checks can start after startup/mod baseline refresh is complete.
+touch "$WATCHDOG_READY_FILE"
 
 EXEC="$SERVER_FILES/ConanSandboxServer.sh"
 

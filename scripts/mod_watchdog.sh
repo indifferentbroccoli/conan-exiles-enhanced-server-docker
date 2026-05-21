@@ -7,9 +7,11 @@ RCON_PORT="${RCON_PORT:-25575}"
 RCON_PASSWORD="${RCON_PASSWORD:-}"
 MOD_WATCHDOG_INTERVAL="${MOD_WATCHDOG_INTERVAL:-600}"
 MOD_WATCHDOG_RESTART_DELAY="${MOD_WATCHDOG_RESTART_DELAY:-300}"
+MOD_WATCHDOG_INITIAL_GRACE=3600
 
 MODS_DIR="/home/steam/server-files/ConanSandbox/Mods"
 TIMESTAMPS_FILE="$MODS_DIR/.mod_timestamps"
+WATCHDOG_READY_FILE="/home/steam/server-files/.watchdog_ready"
 
 # Exit early if no mods are configured
 if [ -z "$MODS" ]; then
@@ -154,9 +156,16 @@ do_restart() {
     fi
 }
 
-# Allow the server time to start before the first check
+# Wait until startup has completed mod baseline timestamp refresh.
 LogAction "Mod watchdog started (interval=${MOD_WATCHDOG_INTERVAL}s, restart_delay=${MOD_WATCHDOG_RESTART_DELAY}s)"
-sleep 60
+LogAction "Mod watchdog: Waiting for startup readiness marker before first check."
+while [ ! -f "$WATCHDOG_READY_FILE" ]; do
+    sleep 5
+done
+
+# Give the game server a short grace period after startup readiness.
+LogAction "Mod watchdog: Startup ready. Waiting initial grace period (${MOD_WATCHDOG_INITIAL_GRACE}s)."
+sleep "$MOD_WATCHDOG_INITIAL_GRACE"
 
 while true; do
     LogAction "Mod watchdog: Running update check for configured mods (single batched API call)."
