@@ -82,6 +82,7 @@ install() {
 
   /depotdownloader/DepotDownloader \
     -app 443030 \
+    -cellid 0 \
     -dir /home/steam/server-files \
     -validate
 

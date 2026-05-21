@@ -23,6 +23,17 @@ RCON_PASSWORD="${RCON_PASSWORD:-}"
 ADMIN_PASSWORD="${ADMIN_PASSWORD:-}"
 MODS="${MODS:-}"
 
+# Steam App IDs are fixed for Conan Exiles dedicated server registration.
+STEAM_APP_ID=440900
+STEAM_GAME_ID=440900
+export SteamAppId="$STEAM_APP_ID"
+export SteamGameId="$STEAM_GAME_ID"
+
+# Some engines read this file from working dir or Linux binaries dir.
+echo "$STEAM_APP_ID" > "$SERVER_FILES/steam_appid.txt"
+mkdir -p "$SERVER_FILES/ConanSandbox/Binaries/Linux"
+echo "$STEAM_APP_ID" > "$SERVER_FILES/ConanSandbox/Binaries/Linux/steam_appid.txt"
+
 CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
 mkdir -p "$CONFIG_DIR"
 
@@ -96,6 +107,7 @@ fi
 
 chmod +x "$EXEC"
 LogInfo "Server starting on port ${PORT}, query port ${QUERY_PORT}"
+LogInfo "Steam AppID config: SteamAppId=${SteamAppId}, SteamGameId=${SteamGameId}"
 
 ARGS=(
     /Game/Maps/ConanSandbox/ConanSandbox
