@@ -64,4 +64,20 @@ if [ "${MOD_WATCHDOG_ENABLED:-false}" = "true" ] && [ -n "${MODS}" ]; then
     fi
 fi
 
+# Start periodic restart scheduler when PERIODIC_RESTART_EVERY_HOURS is 1-24 (0 disables).
+PERIODIC_HOURS="${PERIODIC_RESTART_EVERY_HOURS:-0}"
+if [[ "$PERIODIC_HOURS" =~ ^[0-9]+$ ]] && [ "$PERIODIC_HOURS" -ge 1 ] && [ "$PERIODIC_HOURS" -le 24 ]; then
+    if [ -z "${RCON_PASSWORD}" ]; then
+        LogError "Periodic restart requires RCON_PASSWORD to safely check online players. Scheduler will not start."
+    else
+        su - steam -c "cd /home/steam/server && \
+            RCON_PORT='${RCON_PORT}' \
+            RCON_PASSWORD='${RCON_PASSWORD}' \
+            PERIODIC_RESTART_EVERY_HOURS='${PERIODIC_HOURS}' \
+            ./periodic_restart.sh" &
+    fi
+elif [ "$PERIODIC_HOURS" != "0" ]; then
+    LogError "Invalid PERIODIC_RESTART_EVERY_HOURS='${PERIODIC_HOURS}'. Expected 0 or range 1-24."
+fi
+
 wait "$killpid"
