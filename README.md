@@ -17,11 +17,11 @@ Conan Exiles Enhanced is the Unreal Engine 5 upgrade of Conan Exiles, with stunn
 
 ## Server Requirements
 
-| Resource | Minimum  | Recommended |
-|----------|----------|-------------|
-| CPU      | 2 cores  | 4+ cores    |
-| RAM      | 8GB      | 16GB        |
-| Storage  | 25GB     | 50GB        |
+| Resource | Minimum | Recommended |
+| -------- | ------- | ----------- |
+| CPU      | 2 cores | 4+ cores    |
+| RAM      | 8GB     | 16GB        |
+| Storage  | 25GB    | 50GB        |
 
 ## How to use
 
@@ -71,31 +71,35 @@ docker run -d \
 
 ## Environment Variables
 
-| Variable        | Default | Info |
-|-----------------|---------|------|
-| PUID            | 1000    | User ID for file permissions |
-| PGID            | 1000    | Group ID for file permissions |
-| UPDATE_ON_START | true    | Set to `false` to skip downloading and validating server files on startup |
-| PORT            | 7777    | UDP port the server listens on (pinger port is always PORT+1) |
-| QUERY_PORT      | 27015   | UDP port for Steam server browser queries |
-| RCON_PORT       | 25575   | TCP port for RCON |
-| MAX_PLAYERS     | 40      | Maximum number of players allowed on the server |
-| SERVER_NAME     | Conan Exiles Enhanced Server | Name shown in the server browser |
-| SERVER_PASSWORD |         | Leave blank for a public server |
-| RCON_PASSWORD   |         | Password for RCON connections |
-| ADMIN_PASSWORD  |         | Server admin password |
-| MODS            |         | Comma-separated Steam Workshop mod IDs (e.g. `880454836,1159180273`) |
+| Variable                     | Default                      | Info                                                                                                                                  |
+| ---------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| PUID                         | 1000                         | User ID for file permissions                                                                                                          |
+| PGID                         | 1000                         | Group ID for file permissions                                                                                                         |
+| PORT                         | 7777                         | UDP port the server listens on (pinger port is always PORT+1)                                                                         |
+| QUERY_PORT                   | 27015                        | UDP port for Steam server browser queries                                                                                             |
+| RCON_PORT                    | 25575                        | TCP port for RCON                                                                                                                     |
+| MAX_PLAYERS                  | 40                           | Maximum number of players allowed on the server                                                                                       |
+| UPDATE_ON_START              | true                         | Set to `false` to skip downloading and validating server files on startup                                                             |
+| SERVER_NAME                  | Conan Exiles Enhanced Server | Name shown in the server browser                                                                                                      |
+| SERVER_PASSWORD              |                              | Leave blank for a public server                                                                                                       |
+| RCON_PASSWORD                |                              | Password for RCON connections                                                                                                         |
+| ADMIN_PASSWORD               |                              | Server admin password                                                                                                                 |
+| MODS                         |                              | Comma-separated Steam Workshop mod IDs (e.g. `880454836,1159180273`)                                                                  |
+| MOD_WATCHDOG_ENABLED         | false                        | Set to `true` to enable automatic mod update detection and server restart. Requires `UPDATE_ON_START=true` and `MODS`                 |
+| MOD_WATCHDOG_INTERVAL        | 600                          | How often (in seconds) to check Steam Workshop for mod updates, default to 10 minutes                                                 |
+| MOD_WATCHDOG_RESTART_DELAY   | 300                          | Seconds to wait before restarting after an update is detected. Countdown announcements are broadcast to players, default to 5 minutes |
+| PERIODIC_RESTART_EVERY_HOURS | 0                            | Set to `0` to disable. Set from `1` to `24` to check every X hours and restart only when zero players are online                      |
 
 ## Port Forwarding
 
 Forward these ports through your firewall/router:
 
-| Port  | Protocol | Purpose                        |
-|-------|----------|--------------------------------|
-| 7777  | UDP      | Game traffic                   |
-| 7778  | UDP      | Pinger port (always PORT+1)    |
-| 27015 | UDP      | Steam server browser           |
-| 25575 | TCP      | RCON                           |
+| Port  | Protocol | Purpose                     |
+| ----- | -------- | --------------------------- |
+| 7777  | UDP      | Game traffic                |
+| 7778  | UDP      | Pinger port (always PORT+1) |
+| 27015 | UDP      | Steam server browser        |
+| 25575 | TCP      | RCON                        |
 
 See [portforward.com](https://portforward.com) for router-specific guides.
 
