@@ -68,26 +68,22 @@ if [ -n "${MODS}" ]; then
         done
     done
 
-    # Store current Workshop timestamps in a single API request for watchdog baseline.
+    # Record current Workshop timestamps in a single batched API request for watchdog baseline.
     if [ "${#CLEAN_MOD_IDS[@]}" -gt 0 ]; then
-        BATCH_TIMESTAMPS=$(get_workshop_timestamps_batch "${CLEAN_MOD_IDS[@]}")
-        declare -A LATEST_TS_BY_MOD
-        if [ -n "$BATCH_TIMESTAMPS" ]; then
+        batch_ts=$(get_workshop_timestamps_batch "${CLEAN_MOD_IDS[@]}")
+        declare -A ts_by_mod
+        if [ -n "$batch_ts" ]; then
             while IFS='=' read -r id ts; do
                 [ -z "$id" ] && continue
-                LATEST_TS_BY_MOD["$id"]="$ts"
-            done <<< "$BATCH_TIMESTAMPS"
+                ts_by_mod["$id"]="$ts"
+            done <<< "$batch_ts"
         fi
 
         for MOD_ID in "${CLEAN_MOD_IDS[@]}"; do
-            MOD_TS="${LATEST_TS_BY_MOD[$MOD_ID]}"
-            if [ -n "$MOD_TS" ]; then
-                if [ -f "$TIMESTAMPS_FILE" ] && grep -q "^${MOD_ID}=" "$TIMESTAMPS_FILE"; then
-                    sed -i "s|^${MOD_ID}=.*|${MOD_ID}=${MOD_TS}|" "$TIMESTAMPS_FILE"
-                else
-                    echo "${MOD_ID}=${MOD_TS}" >> "$TIMESTAMPS_FILE"
-                fi
-                LogInfo "Mod $MOD_ID timestamp recorded: $MOD_TS"
+            mod_ts="${ts_by_mod[$MOD_ID]:-}"
+            if [ -n "$mod_ts" ]; then
+                store_timestamp "$MOD_ID" "$mod_ts"
+                LogInfo "Mod $MOD_ID timestamp recorded: $mod_ts"
             else
                 LogWarn "Could not record baseline timestamp for mod $MOD_ID"
             fi

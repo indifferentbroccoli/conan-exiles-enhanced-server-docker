@@ -43,17 +43,6 @@ set_ini_value() {
   crudini --set "$1" "$2" "$3" "$4"
 }
 
-# Query the Steam Workshop API for a published file's time_updated timestamp.
-# Usage: get_workshop_timestamp <mod_id>
-# Prints the Unix timestamp on success, or nothing on failure.
-get_workshop_timestamp() {
-    local mod_id="$1"
-    curl -sf -X POST \
-        "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
-        --data "itemcount=1&publishedfileids[0]=${mod_id}" \
-        | jq -r '.response.publishedfiledetails[0].time_updated // empty' 2>/dev/null
-}
-
 # Query the Steam Workshop API for multiple published files in one request.
 # Usage: get_workshop_timestamps_batch <mod_id> [<mod_id> ...]
 # Prints one line per returned mod in the format: <mod_id>=<timestamp>
@@ -75,6 +64,40 @@ get_workshop_timestamps_batch() {
     "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
     --data "$payload" \
     | jq -r '.response.publishedfiledetails[]? | "\(.publishedfileid // empty)=\(.time_updated // empty)"' 2>/dev/null
+}
+
+# Read the stored timestamp for a mod from the timestamps file.
+# Requires $TIMESTAMPS_FILE to be set by the caller.
+# Usage: get_stored_timestamp <mod_id>
+get_stored_timestamp() {
+    local mod_id="$1"
+    if [ -f "$TIMESTAMPS_FILE" ]; then
+        grep "^${mod_id}=" "$TIMESTAMPS_FILE" | cut -d'=' -f2
+    fi
+}
+
+# Write or update a mod's timestamp in the timestamps file.
+# Requires $TIMESTAMPS_FILE to be set by the caller.
+# Usage: store_timestamp <mod_id> <timestamp>
+store_timestamp() {
+    local mod_id="$1"
+    local timestamp="$2"
+    mkdir -p "$(dirname "$TIMESTAMPS_FILE")"
+    if [ -f "$TIMESTAMPS_FILE" ] && grep -q "^${mod_id}=" "$TIMESTAMPS_FILE"; then
+        sed -i "s|^${mod_id}=.*|${mod_id}=${timestamp}|" "$TIMESTAMPS_FILE"
+    else
+        echo "${mod_id}=${timestamp}" >> "$TIMESTAMPS_FILE"
+    fi
+}
+
+# Broadcast a message via RCON. Fails silently if RCON is not configured.
+# Requires $RCON_PORT and $RCON_PASSWORD to be set by the caller.
+# Usage: send_rcon_broadcast <message>
+send_rcon_broadcast() {
+    local message="$1"
+    [ -z "$RCON_PASSWORD" ] && return 0
+    rcon --address "127.0.0.1:$RCON_PORT" --password "$RCON_PASSWORD" \
+        "broadcast $message" 2>/dev/null || true
 }
 
 install() {
@@ -102,10 +125,9 @@ shutdown_server() {
   if [ -n "$pid" ]; then
     kill -SIGTERM "$pid"
 
-    local count=0
-    while [ $count -lt 30 ] && kill -0 "$pid" 2>/dev/null; do
+    local deadline=$(( $(date +%s) + 30 ))
+    while kill -0 "$pid" 2>/dev/null && [ "$(date +%s)" -lt "$deadline" ]; do
       sleep 1
-      count=$((count + 1))
     done
 
     if kill -0 "$pid" 2>/dev/null; then

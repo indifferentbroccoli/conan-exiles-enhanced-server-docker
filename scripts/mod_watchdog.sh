@@ -19,40 +19,10 @@ if [ -z "$MODS" ]; then
     exit 0
 fi
 
-# Read the stored timestamp for a mod from the timestamps file.
-get_stored_timestamp() {
-    local mod_id="$1"
-    if [ -f "$TIMESTAMPS_FILE" ]; then
-        grep "^${mod_id}=" "$TIMESTAMPS_FILE" | cut -d'=' -f2
-    fi
-}
-
-# Write or update a mod's timestamp in the timestamps file.
-store_timestamp() {
-    local mod_id="$1"
-    local timestamp="$2"
-    mkdir -p "$MODS_DIR"
-    if [ -f "$TIMESTAMPS_FILE" ] && grep -q "^${mod_id}=" "$TIMESTAMPS_FILE"; then
-        sed -i "s|^${mod_id}=.*|${mod_id}=${timestamp}|" "$TIMESTAMPS_FILE"
-    else
-        echo "${mod_id}=${timestamp}" >> "$TIMESTAMPS_FILE"
-    fi
-}
-
-# Send a broadcast message via RCON. Fails silently if RCON is not configured.
-send_rcon_broadcast() {
-    local message="$1"
-    if [ -z "$RCON_PASSWORD" ]; then
-        return 0
-    fi
-    rcon --address "127.0.0.1:$RCON_PORT" --password "$RCON_PASSWORD" \
-        "broadcast $message" 2>/dev/null || true
-}
-
 # Check all configured mods for Steam Workshop updates.
 # Returns 0 (true) if at least one update is detected, 1 otherwise.
 check_for_updates() {
-    local updates_found=false
+    local found=1
     local mod_ids=()
 
     IFS=',' read -ra MOD_IDS <<< "$MODS"
@@ -100,11 +70,11 @@ check_for_updates() {
 
         if [ "$current_ts" -gt "$stored_ts" ]; then
             LogAction "Mod watchdog: Update detected for mod $MOD_ID (stored=$stored_ts, latest=$current_ts)"
-            updates_found=true
+            found=0
         fi
     done
 
-    $updates_found
+    return "$found"
 }
 
 # Send countdown RCON announcements and then terminate the server process.
