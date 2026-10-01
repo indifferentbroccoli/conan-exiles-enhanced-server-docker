@@ -54,6 +54,12 @@ install() {
   LogSuccess "Server install complete"
 }
 
+get_mod_time_updated() {
+  curl -s -d "itemcount=1&publishedfileids[0]=$1" \
+    https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/ \
+    | grep -o '"time_updated":[0-9]*' | cut -d: -f2
+}
+
 # Attempt to shutdown the server gracefully
 # Returns 0 if it is shutdown
 # Returns 1 if it is not able to be shutdown
