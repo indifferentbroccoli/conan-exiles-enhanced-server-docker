@@ -20,6 +20,13 @@ ADMIN_PASSWORD="${ADMIN_PASSWORD:-}"
 MODS="${MODS:-}"
 MAP="${MAP:-/Game/Maps/ConanSandbox/ConanSandbox}"
 
+STEAM_APP_ID=440900
+export SteamAppId="$STEAM_APP_ID"
+export SteamGameId="$STEAM_APP_ID"
+echo "$STEAM_APP_ID" > "$SERVER_FILES/steam_appid.txt"
+mkdir -p "$SERVER_FILES/ConanSandbox/Binaries/Linux"
+echo "$STEAM_APP_ID" > "$SERVER_FILES/ConanSandbox/Binaries/Linux/steam_appid.txt"
+
 CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
 mkdir -p "$CONFIG_DIR"
 
