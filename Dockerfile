@@ -45,7 +45,8 @@ ENV HOME=/home/steam \
     SERVER_PASSWORD="" \
     RCON_PASSWORD="" \
     ADMIN_PASSWORD="" \
-    MODS=""
+    MODS="" \
+    MAP="/Game/Maps/ConanSandbox/ConanSandbox"
 
 COPY ./scripts /home/steam/server/
 

@@ -85,6 +85,7 @@ docker run -d \
 | RCON_PASSWORD   |         | Password for RCON connections |
 | ADMIN_PASSWORD  |         | Server admin password |
 | MODS            |         | Comma-separated Steam Workshop mod IDs (e.g. `880454836,1159180273`) |
+| MAP             | /Game/Maps/ConanSandbox/ConanSandbox | Map to load. For a modded map, add its mod to `MODS` and set e.g. `/Game/Mods/EpicExiles/DCYMap` |
 
 ## Port Forwarding
 

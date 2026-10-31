@@ -18,6 +18,7 @@ RCON_PASSWORD="${RCON_PASSWORD:-}"
 
 ADMIN_PASSWORD="${ADMIN_PASSWORD:-}"
 MODS="${MODS:-}"
+MAP="${MAP:-/Game/Maps/ConanSandbox/ConanSandbox}"
 
 CONFIG_DIR="$SERVER_FILES/ConanSandbox/Saved/Config/LinuxServer"
 mkdir -p "$CONFIG_DIR"
@@ -64,10 +65,10 @@ if [ ! -f "$EXEC" ]; then
 fi
 
 chmod +x "$EXEC"
-LogInfo "Server starting on port ${PORT}, query port ${QUERY_PORT}"
+LogInfo "Server starting on port ${PORT}, query port ${QUERY_PORT}, map ${MAP}"
 
 ARGS=(
-    /Game/Maps/ConanSandbox/ConanSandbox
+    "${MAP}"
     "-port=${PORT}"
     "-queryport=${QUERY_PORT}"
     "-MaxPlayers=${MAX_PLAYERS}"
